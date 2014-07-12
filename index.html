@@ -52,8 +52,8 @@
     <p>Chrome Embedded Framework can be used to wrap web apis into a native app. CEF apis allow develpers to give native C++ implementation to javascript functions. This post will demonstrate an example of how to take a CEF project (<a href='https://github.com/adobe/brackets'>brackets</a>) and follow the steps outlined in adobe's <a href='https://github.com/adobe/brackets-shell/wiki/Writing-V8-Extensions'>documentation</a> to create extended functionality.</p>
     The process begins by defining some javascript functions with the keyword native.
 		<div class='source_code'>
-			<div class='filename'>appshell&#47;appshell_extensions.js</div>
 <pre>
+	<div class='filename'>appshell&#47;appshell_extensions.js</div>
 native function SetRoundedCorners();
 appshell.app.setRoundedCorners = function (x, y, width, height, ellipse_width,
 				           ellipse_height, redraw, callback) {
@@ -65,7 +65,7 @@ appshell.app.setRoundedCorners = function (x, y, width, height, ellipse_width,
 		Part of the code that sends the message is shown below. Brackets already routes all messages to the UI thread so nothing needs to be done here.
 		<div class='source_code'>
 		<pre>
-			<div class='filename'>appshell&#47;client_app.cpp</div>
+	<div class='filename'>appshell&#47;client_app.cpp</div>
 class AppShellExtensionHandler : public CefV8Handler {
    public:
    ...
@@ -97,8 +97,8 @@ class AppShellExtensionHandler : public CefV8Handler {
 };</pre></div>Within the UI process, brackets receives and handles the message. A response communication is prepared with error messages and callback parameters.
 		Brackets puts OS-specific definitions in appshell_extensions_platform.h
 		<div class='source_code'>
-			<div class='filename'>appshell&#47;appshell_extensions.cpp</div>
 		<pre>
+	<div class='filename'>appshell&#47;appshell_extensions.cpp</div>
 class ProcessMessageDelegate : public ClientHandler::ProcessMessageDelegate {
     public:
         ProcessMessageDelegate()
@@ -168,8 +168,8 @@ class ProcessMessageDelegate : public ClientHandler::ProcessMessageDelegate {
         ...
 };</pre></div>Now implement the windows-specific functionality.
 		<div class='source_code'>
-		<div class='filename'>appshell&#47;appshell_extensions_win.cpp</div>
 		<pre>
+	<div class='filename'>appshell&#47;appshell_extensions_win.cpp</div>
 void SetRoundedCorners(CefRefPtr&lt;CefBrowser&gt; browser, int x, int y, int width,
                        int height, int ellipse_width, int ellipse_height, bool redraw){
     HRGN region = CreateRoundRectRgn(x, y, x + width, y + height, ellipse_width, ellipse_height);
