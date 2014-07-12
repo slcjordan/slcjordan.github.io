@@ -8,6 +8,7 @@
 
   <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
   <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <link rel="stylesheet" type="text/css" href="stylesheets/mystyle.css">
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript" src="javascripts/script.js"></script>
 
@@ -42,15 +43,141 @@
 
 <p>Software Engineer at <a href="http://www.getweave.com/">weave</a>.</p>
 
-<h3>
-<a name="current-endeavors" class="anchor" href="#current-endeavors"><span class="octicon octicon-link"></span></a>Current Endeavors</h3>
-
 <ul>
-<li>I am working towards a thorough understanding of Python.</li>
-<li>I am learning as much as I can about algorithms</li>
-</ul><h3>
-<a name="sincere-thanks" class="anchor" href="#sincere-thanks"><span class="octicon octicon-link"></span></a>Sincere thanks</h3>
+<li><a href="https://github.com/weave-lab/pconf">Contributor to pconf -- python configuration</a></li>
+</ul>
+	<div class='entry'>
+		<div class='date'>May 9, 2013</div>
+		<div class='blog_title'>Modifying Adobe brackets &#40;CEF&#41; to have rounded corners in windows</div>
+    <p>Chrome Embedded Framework can be used to wrap web apis into a native app. CEF apis allow develpers to give native C++ implementation to javascript functions. This post will demonstrate an example of how to take a CEF project (<a href='https://github.com/adobe/brackets'>brackets</a>) and follow the steps outlined in adobe's <a href='https://github.com/adobe/brackets-shell/wiki/Writing-V8-Extensions'>documentation</a> to create extended functionality.</p>
+    The process begins by defining some javascript functions with the keyword native.
+		<div class='source_code'>
+			<div class='filename'>appshell&#47;appshell_extensions.js</div>
+<pre>
+native function SetRoundedCorners();
+appshell.app.setRoundedCorners = function (x, y, width, height, ellipse_width,
+				           ellipse_height, redraw, callback) {
+    SetRoundedCorners(callback, x, y, width, height, ellipse_width, ellipse_height, redraw);
+}
+</pre>
+</div>When the javascript function is called, brackets has defined a CefV8Handler that will handle the implementation via a call to CefV8Handler::Execute.
+		Since CEF is multi-threaded and multi-process, the real work will be done in the UI thread. V8 handlers do not reside in the same process as the UI thread so inter-process communication is utilized.
+		Part of the code that sends the message is shown below. Brackets already routes all messages to the UI thread so nothing needs to be done here.
+		<div class='source_code'>
+		<pre>
+			<div class='filename'>appshell&#47;client_app.cpp</div>
+class AppShellExtensionHandler : public CefV8Handler {
+   public:
+   ...
+   virtual bool Execute(const CefString&amp; name,
+		       CefRefPtr&lt;CefV8Value&gt; object,
+		       const CefV8ValueList&amp; arguments,
+		       CefRefPtr&lt;CefV8Value&gt;&amp; retval,
+		       CefString&amp; exception) {
+      
+          ...
 
+        CefRefPtr&lt;CefProcessMessage&gt; message = 
+		CefProcessMessage::Create(name);
+        CefRefPtr&lt;CefListValue&gt; messageArgs = message-&gt;GetArgumentList();
+
+	 ... 
+	  
+        // Pass the rest of the arguments
+	for (unsigned int i = 1; i &lt; arguments.size(); i++)
+	     SetListValue(messageArgs, i, arguments[i]);
+	browser-&gt;SendProcessMessage(PID_BROWSER, message);
+	  
+	messageId++;
+
+    }
+	
+    return true;
+  }
+};</pre></div>Within the UI process, brackets receives and handles the message. A response communication is prepared with error messages and callback parameters.
+		Brackets puts OS-specific definitions in appshell_extensions_platform.h
+		<div class='source_code'>
+			<div class='filename'>appshell&#47;appshell_extensions.cpp</div>
+		<pre>
+class ProcessMessageDelegate : public ClientHandler::ProcessMessageDelegate {
+    public:
+        ProcessMessageDelegate()
+        {
+        }
+
+        // From ClientHandler::ProcessMessageDelegate.
+        virtual bool OnProcessMessageReceived(
+    		      CefRefPtr&lt;ClientHandler&gt; handler,
+    		      CefRefPtr&lt;CefBrowser&gt; browser,
+    		      CefProcessId source_process,
+    		      CefRefPtr&lt;CefProcessMessage&gt; message) OVERRIDE {
+    	std::string message_name = message-&gt;GetName();
+    	CefRefPtr&lt;CefListValue&gt; argList = message-&gt;GetArgumentList();
+    	int32 callbackId = -1;
+    	int32 error = NO_ERROR;
+    	CefRefPtr&lt;CefProcessMessage&gt; response = 
+    	    CefProcessMessage::Create(&quot;invokeCallback&quot;);
+    	CefRefPtr&lt;CefListValue&gt; responseArgs = response-&gt;GetArgumentList();
+    	...
+    	
+        if (message_name == &quot;SetRoundedCorners&quot;) {
+            // Parameters:
+            //  0: int32 - callback id
+            //  1: int - x
+            //  2: int - y
+            //  3: int - width
+            //  4: int - height
+            //  5: int - ellipse_width
+            //  6: int - ellipse_height
+            if (argList-&gt;GetSize() != 8||
+                argList-&gt;GetType(1) != VTYPE_INT||
+                argList-&gt;GetType(2) != VTYPE_INT||
+                argList-&gt;GetType(3) != VTYPE_INT||
+                argList-&gt;GetType(4) != VTYPE_INT||
+                argList-&gt;GetType(5) != VTYPE_INT||
+                argList-&gt;GetType(6) != VTYPE_INT||
+                argList-&gt;GetType(7) != VTYPE_BOOL
+                ) {
+                error = ERR_INVALID_PARAMS;
+                ExtensionString message = CefString(&quot;error :(&quot;);
+            }
+            if (error == NO_ERROR) {
+                int x = argList-&gt;GetInt(1);
+                int y = argList-&gt;GetInt(2);
+                int width = argList-&gt;GetInt(3);
+                int height = argList-&gt;GetInt(4);
+                int ellipse_width = argList-&gt;GetInt(5);
+                int ellipse_height = argList-&gt;GetInt(6);
+                bool redraw = argList-&gt;GetBool(7);
+                SetRoundedCorners(browser, x, y, width, height, ellipse_width, ellipse_height, redraw);
+            }
+        
+        }
+
+        ...
+
+        if (callbackId != -1) {
+    	    responseArgs-&gt;SetInt(1, error);
+    	  
+    	    // Send response
+    	    browser-&gt;SendProcessMessage(PID_RENDERER, response);
+	    }
+          
+    	return true;
+    }
+        ...
+};</pre></div>Now implement the windows-specific functionality.
+		<div class='source_code'>
+		<div class='filename'>appshell&#47;appshell_extensions_win.cpp</div>
+		<pre>
+void SetRoundedCorners(CefRefPtr&lt;CefBrowser&gt; browser, int x, int y, int width,
+                       int height, int ellipse_width, int ellipse_height, bool redraw){
+    HRGN region = CreateRoundRectRgn(x, y, x + width, y + height, ellipse_width, ellipse_height);
+    CefWindowHandle hWnd = browser-&gt;GetHost()-&gt;GetWindowHandle();
+    SetWindowRgn(hWnd, region, redraw);
+}</pre>
+
+<h3><a name="sincere-thanks" class="anchor" href="#sincere-thanks"><span class="octicon octicon-link"></span></a>Sincere thanks</h3>
 <p>to my current mentors and friends Clint Berry (<a href="https://github.com/clintberry" class="user-mention">@clintberry</a>) and Tyson Phalp (<a href="https://github.com/tphalp" class="user-mention">@tphalp</a>).</p>
 
         </article>

@@ -1,0 +1,42 @@
+
+.entry{
+  font-size: 95%;
+  border-bottom-style:solid;
+  border-color:#63a52a;
+  border-width:5px;
+  margin: 25px 25px;
+}
+.date{
+  font-style: italic;
+  font-size: 75%;
+  padding-bottom: 25px;
+}
+.blog_title{
+  font-size: 175%;
+  font-style: bold;
+  padding-bottom: 25px;
+  color: #3b3b3b;
+}
+.source_code{
+  margin: 25px 3px;
+  font-size: 105%;
+  border-left-style:solid;
+  border-color:#63a52a;
+  /* background-color:white; */
+  /*
+  border-top-style:solid;
+  border-bottom-style:double;
+  border-right-style:double;
+  */
+  padding: 0px 50px;
+}
+.filename{
+  font-style: italic;
+  font-size: 75%;
+  color:#63a52a;
+}
+.credits{
+  font-style: italic;
+  font-size: 95%;
+  color:#63a52a;
+}
