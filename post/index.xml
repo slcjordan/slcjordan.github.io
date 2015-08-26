@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-      <title>Posts on Jordan Crabtree </title>
-      <generator uri="https://gohugo.io">Hugo</generator>
-    <link>http://localhost:1313/post/</link>
+    <title>Posts on Jordan Crabtree</title>
+    <link>http://slcjordan.github.io/post/</link>
+    <description>Recent content in Posts on Jordan Crabtree</description>
+    <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    
-    
-    <updated>Tue, 25 Aug 2015 19:16:47 MDT</updated>
+    <lastBuildDate>Tue, 25 Aug 2015 19:16:47 -0600</lastBuildDate>
+    <atom:link href="http://slcjordan.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Introduction to actors in Go</title>
-      <link>http://localhost:1313/post/actor/</link>
-      <pubDate>Tue, 25 Aug 2015 19:16:47 MDT</pubDate>
+      <link>http://slcjordan.github.io/post/actor/</link>
+      <pubDate>Tue, 25 Aug 2015 19:16:47 -0600</pubDate>
       
-      <guid>http://localhost:1313/post/actor/</guid>
+      <guid>http://slcjordan.github.io/post/actor/</guid>
       <description>
 
 &lt;p&gt;Among the many challenges that multi-threaded programming can present is that of the dreaded race condition. Race conditions occur when a thread modifies state and another thread accesses that state without any synchronization events. Actors avoid race conditions by assigning a single thread to act on behalf of other threads to modify state.&lt;/p&gt;
 
 &lt;h2 id=&#34;concurrency-problems:815a9d53980737ee4b1ad0ef442c062c&#34;&gt;Concurrency Problems&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/racers.jpg&#34; alt=&#34;racers&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/racers.jpg&#34; alt=&#34;racers&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;This go program is supposed to concurrently increment a counter. It spins up a thousand threads, each calling the &lt;em&gt;increment&lt;/em&gt; function. The program correctly waits for each thread to finish, but without any synchronization event to control access to the &lt;em&gt;counter&lt;/em&gt; variable, we get unpredictable behavior:&lt;/p&gt;
 
@@ -86,7 +86,7 @@ exit status 66
 
 &lt;h2 id=&#34;what-is-an-actor:815a9d53980737ee4b1ad0ef442c062c&#34;&gt;What is an actor?&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/zoolander.jpg&#34; alt=&#34;zoolander&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/zoolander.jpg&#34; alt=&#34;zoolander&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;An actor is a big name for a simple concept: Never allowing multiple threads to access state&amp;hellip; Instead delegate a single thread to process requests for state access and modification. Let&amp;rsquo;s modify our code to use an actor thread to execute our increments:&lt;/p&gt;
 
@@ -122,11 +122,11 @@ func main() {
 
 &lt;p&gt;Just to review, to get the i, jth entry of the product, take the ith row of the first matrix and multiply entry by entry with the jth column of the second matrix.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/matrix_multiply.jpg&#34; alt=&#34;matrix_multiply&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/matrix_multiply.jpg&#34; alt=&#34;matrix_multiply&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The ith row of the result can be deduced by considering the ith row of the first matrix being multiplied with all of the second matrix.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/row_vector_multiply.jpg&#34; alt=&#34;vector_multiply&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/row_vector_multiply.jpg&#34; alt=&#34;vector_multiply&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;By using an actor for each of the rows, the ith row can be computed and replaced concurrently and in a threadsafe way. Here&amp;rsquo;s a gist to demonstrate:&lt;/p&gt;
 
