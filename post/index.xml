@@ -101,6 +101,7 @@ func actor() {
 
 func main() {
     runtime.GOMAXPROCS(runtime.NumCPU())
+    defer close(actions)
     go actor()
 
     for i := 0; i &amp;lt; 1000; i++ {
