@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Jordan Crabtree</title>
+      <title>Posts on Jordan Crabtree </title>
+      <generator uri="https://gohugo.io">Hugo</generator>
     <link>http://slcjordan.github.io/post/</link>
-    <description>Recent content in Posts on Jordan Crabtree</description>
-    <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 25 Aug 2015 19:16:47 -0600</lastBuildDate>
-    <atom:link href="http://slcjordan.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <updated>Tue, 25 Aug 2015 19:16:47 MDT</updated>
     
     <item>
       <title>Introduction to actors in Go</title>
       <link>http://slcjordan.github.io/post/actor/</link>
-      <pubDate>Tue, 25 Aug 2015 19:16:47 -0600</pubDate>
+      <pubDate>Tue, 25 Aug 2015 19:16:47 MDT</pubDate>
       
       <guid>http://slcjordan.github.io/post/actor/</guid>
       <description>
