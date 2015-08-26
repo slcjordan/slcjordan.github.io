@@ -105,7 +105,7 @@ func main() {
 
     for i := 0; i &amp;lt; 1000; i++ {
         wg.Add(1)
-        actions &amp;lt;- increment
+        go func() { actions &amp;lt;- increment }()
     }
     ...
 &lt;/code&gt;&lt;/pre&gt;
