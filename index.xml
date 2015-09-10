@@ -10,6 +10,22 @@
     <updated>Tue, 25 Aug 2015 19:16:47 MDT</updated>
     
     <item>
+      <title>About slcjordan-bot</title>
+      <link>http://slcjordan.github.io/bot/about/</link>
+      <pubDate>Tue, 25 Aug 2015 19:16:47 MDT</pubDate>
+      
+      <guid>http://slcjordan.github.io/bot/about/</guid>
+      <description>
+
+&lt;h2 id=&#34;what-is-slcjordan-bot:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;What is slcjordan-bot&lt;/h2&gt;
+
+&lt;p&gt;slcjordan-bot is my personal web-scraper. I use webscraping in my study of data science.&lt;/p&gt;
+
+&lt;p&gt;If you do not wish your website to be scraped, please do not hesitate to contact me via e-mail: jordan@getweave.com&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Introduction to actors in Go</title>
       <link>http://slcjordan.github.io/post/actor/</link>
       <pubDate>Tue, 25 Aug 2015 19:16:47 MDT</pubDate>
