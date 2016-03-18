@@ -25,5 +25,25 @@
 </description>
     </item>
     
+    <item>
+      <title></title>
+      <link>http://slcjordan.github.io/bot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 UTC</pubDate>
+      
+      <guid>http://slcjordan.github.io/bot/</guid>
+      <description>&lt;!DOCTYPE html PUBLIC &#34;-//W3C//DTD HTML 3.2 Final//EN&#34;&gt;&lt;html&gt;
+&lt;title&gt;Directory listing for /content/bot/&lt;/title&gt;
+&lt;body&gt;
+&lt;h2&gt;Directory listing for /content/bot/&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;about.md&#34;&gt;about.md&lt;/a&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

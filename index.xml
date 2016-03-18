@@ -7,7 +7,149 @@
     <language>en-us</language>
     
     
-    <updated>Tue, 25 Aug 2015 19:16:47 MDT</updated>
+    <updated>Thu, 17 Mar 2016 16:47:47 MDT</updated>
+    
+    <item>
+      <title>A Short Survey of PProf Visualization Tools</title>
+      <link>http://slcjordan.github.io/post/pprofsurvey/</link>
+      <pubDate>Thu, 17 Mar 2016 16:47:47 MDT</pubDate>
+      
+      <guid>http://slcjordan.github.io/post/pprofsurvey/</guid>
+      <description>
+
+&lt;p&gt;Debugging CPU related issues can often lead to nuanced questions about trends. Does the heap usage spike or grow gradually? Where is this routine being called from and how often?&lt;/p&gt;
+
+&lt;h2 id=&#34;a-picture-is-worth-a-thousand-words:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;A picture is worth a thousand words&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/fresco.jpg&#34; alt=&#34;fresco&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;A picture provides useful context in a way that can otherwise be painful to interpret. By backing graph visualizations with pprof data useful CPU statistics can be contextualized over time.&lt;/p&gt;
+
+&lt;h2 id=&#34;what-is-pprof:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;What is PProf?&lt;/h2&gt;
+
+&lt;p&gt;PProf is a cpu profiler that is part of the gperftools developed by Google for analyzing multi-threaded applications. The &lt;a href=&#34;http://golang.org/pkg/net/http/pprof/&#34;&gt;pprof&lt;/a&gt; package of golang&amp;rsquo;s standard library provides the data needed by the pprof tool via HTTP.&lt;/p&gt;
+
+&lt;p&gt;Since pprof data is served via HTTP, it is essential to run a webserver in your application. As a side-effect of simply importing pprof, the package will register its handlers with the running webserver so no further action is needed.&lt;/p&gt;
+
+&lt;p&gt;For a long-running application, this is an example of using pprof:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import (
+	&amp;quot;log&amp;quot;
+	&amp;quot;net/http&amp;quot;
+	_ &amp;quot;net/http/pprof&amp;quot;
+)
+
+func main(){
+	go func() {
+		log.Println(http.ListenAndServe(&amp;quot;localhost:6060&amp;quot;, nil))
+	}()
+	...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(taken from &lt;a href=&#34;http://golang.org/pkg/net/http/pprof/&#34;&gt;http://golang.org/pkg/net/http/pprof/&lt;/a&gt;)&lt;/p&gt;
+
+&lt;h2 id=&#34;using-pprof:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;Using pprof&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/graphviz.png&#34; alt=&#34;graphviz&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;a href=&#34;http://blog.golang.org/profiling-go-programs&#34;&gt;http://blog.golang.org/profiling-go-programs&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;PProf comes with the ability to generate graphviz visualiztions of a program&amp;rsquo;s call graph. PProf bases the graph off of a 30 second sample from a running go application.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Edges represent function calls and are labeled with number of samples with the given function call.&lt;/li&gt;
+&lt;li&gt;Size of box corresponds to number of samples with function running.&lt;/li&gt;
+&lt;li&gt;Each box has 2 labels: the percentage of time that the function was running and the percentage of time that it showed up as part of a stack trace.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;installation-on-mac:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;Installation on Mac&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;$ brew install gperftools
+$ brew install graphviz
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ pprof --web localhost:6060/debug
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;go-torch:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;Go-Torch&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/torch.svg&#34; alt=&#34;torch&#34; /&gt;
+&lt;em&gt;&lt;a href=&#34;http://github.com/uber/go-torch&#34;&gt;http://github.com/uber/go-torch&lt;/a&gt;&lt;/em&gt;
+&lt;em&gt;&lt;a href=&#34;http://www.brendangregg.com/flamegraphs.html&#34;&gt;http://www.brendangregg.com/flamegraphs.html&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Go-torch is a tool created by Uber to use Brendan Gregg&amp;rsquo;s scripts to generate flame graphs for go programs. Like PProf, the visualization is based off a 30 second sample from running the application.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Stack frames are stacked on top of each other vertically, showing the stack depth.&lt;/li&gt;
+&lt;li&gt;Frame width represent the percentage of time that a function showed up as part of a stack trace.&lt;/li&gt;
+&lt;li&gt;If a function has several ancestors, it will show up several times. (On top of each distinct ancestor&amp;rsquo;s stack.)&lt;/li&gt;
+&lt;li&gt;Colors are arbitrary and x-position is in alphabetical order.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;installation:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;Installation&lt;/h4&gt;
+
+&lt;p&gt;requires the installation of go-torch tool, and flame graph scripts by brandangregg.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go get github.com/uber/go-torch
+$ git clone git@github.com:brendangregg/FlameGraph.git
+$ export PATH-$PATH:/path/to/FlameGraph
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;go-torch --file &amp;quot;torch.svg&amp;quot; --url http://localhost:6060
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;gom:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;GOM&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/gom.png&#34; alt=&#34;gom&#34; /&gt;
+&lt;em&gt;&lt;a href=&#34;http://github.com/rakyll/gom&#34;&gt;http://github.com/rakyll/gom&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;GOM is a real time curses-style command line tool with visualization of a running go application, written by Google developer Jaana Dogan.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;has visualization of running goroutines and machine threads over time.&lt;/li&gt;
+&lt;li&gt;Updated in real time.&lt;/li&gt;
+&lt;li&gt;In addition to visualization, GOM also provides text-based profiles of CPU and heap.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go get github.com/rakyll/gom/cmd/gom
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;as a side-effect of importing gom, gom will register extra handlers as well as the pprof ones.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import (
+	_ &amp;quot;github.com/rakyll/gom/http&amp;quot;
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;$ gom --target http://localhost:6060
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;debug-charts:1642a68f27759e63dd5e44b0df5ea778&#34;&gt;Debug charts&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://slcjordan.github.io/images/debugcharts.png&#34; alt=&#34;debugcharts&#34; /&gt;
+&lt;em&gt;&lt;a href=&#34;http://github.com/mkevac/debugcharts&#34;&gt;http://github.com/mkevac/debugcharts&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Debug charts is a tool by Marko Kevac that uses the plotly.js library to create a running web view of a running go application.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Runs in browser.&lt;/li&gt;
+&lt;li&gt;Has visualization of gc pauses, memory allocated and cpu usage.&lt;/li&gt;
+&lt;li&gt;Updated in real time.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;$ go get github.com/mkevac/debugcharts
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;as a side-effect of importing debugcharts, debugcharts will register extra handlers as well as the pprof ones.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import (
+	_ &amp;quot;github.com/rakyll/gom/http&amp;quot;
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then direct your browser to localhost:6060/debug/charts&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>About slcjordan-bot</title>
@@ -148,6 +290,47 @@ func main() {
 &lt;p&gt;By using an actor for each of the rows, the ith row can be computed and replaced concurrently and in a threadsafe way. Here&amp;rsquo;s a gist to demonstrate:&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://gist.github.com/slcjordan/e05de3ab485321ff6cbd&#34;&gt;gist.github.com/slcjordan/e05de3ab485321ff6cbd&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>http://slcjordan.github.io/bot/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 UTC</pubDate>
+      
+      <guid>http://slcjordan.github.io/bot/</guid>
+      <description>&lt;!DOCTYPE html PUBLIC &#34;-//W3C//DTD HTML 3.2 Final//EN&#34;&gt;&lt;html&gt;
+&lt;title&gt;Directory listing for /content/bot/&lt;/title&gt;
+&lt;body&gt;
+&lt;h2&gt;Directory listing for /content/bot/&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;about.md&#34;&gt;about.md&lt;/a&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>http://slcjordan.github.io/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 UTC</pubDate>
+      
+      <guid>http://slcjordan.github.io/</guid>
+      <description>&lt;!DOCTYPE html PUBLIC &#34;-//W3C//DTD HTML 3.2 Final//EN&#34;&gt;&lt;html&gt;
+&lt;title&gt;Directory listing for /content/&lt;/title&gt;
+&lt;body&gt;
+&lt;h2&gt;Directory listing for /content/&lt;/h2&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;bot/&#34;&gt;bot/&lt;/a&gt;
+&lt;li&gt;&lt;a href=&#34;post/&#34;&gt;post/&lt;/a&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;/body&gt;
+&lt;/html&gt;
 </description>
     </item>
     
