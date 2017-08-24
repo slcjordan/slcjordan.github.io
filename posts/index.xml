@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Jordan Crabtree</title>
-    <link>http://slcjordan.github.io/</link>
-    <description>Recent content on Jordan Crabtree</description>
+    <title>Posts on Jordan Crabtree</title>
+    <link>http://slcjordan.github.io/posts/</link>
+    <description>Recent content in Posts on Jordan Crabtree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>This project is licensed under the terms of the &lt;a href=&#34;http://github.com/slcjordan/slcjordan.github.io/blob/master/LICENSE.md&#34;&gt;MIT license&lt;/a&gt;</copyright>
     <lastBuildDate>Fri, 17 Mar 2017 21:46:31 -0700</lastBuildDate>
     
-	<atom:link href="http://slcjordan.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://slcjordan.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>

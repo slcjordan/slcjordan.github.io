@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>404 Page not found</title>
+        <title>Introduction to Actors in Go</title>
         <style>
 
     html body {
@@ -68,7 +68,7 @@
 
                 <div class="navbar-header">
 
-                    <a class="navbar-brand visible-xs" href="#">404 Page not found</a>
+                    <a class="navbar-brand visible-xs" href="#">Introduction to Actors in Go</a>
 
                     <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
                         <span class="icon-bar"></span>
@@ -111,13 +111,144 @@
 
 <main>
 
-    <div class="intro">
+    <div class="item">
 
-        <h1>¯\_(ツ)_/¯</h1>
+    
+    
 
-        <h2>Page not found</h2>
+    
+    
 
-    </div>
+    <h4><a href="/posts/actors/">Introduction to Actors in Go</a></h4>
+    <h5>August 25, 2015</h5>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><p>Among the many challenges that multi-threaded programming can present is that of the dreaded race condition. Race conditions occur when a thread modifies state and another thread accesses that state without any synchronization events. Actors avoid race conditions by assigning a single thread to act on behalf of other threads to modify state.
+</p>
+
+<h2 id="concurrency-problems">Concurrency Problems</h2>
+
+<p><img src="/images/actors/racers.jpg" alt="racers" /></p>
+
+<p>This go program is supposed to concurrently increment a counter. It spins up a thousand threads, each calling the increment function. The program correctly waits for each thread to finish, but without any synchronization event to control access to the counter variable, we get unpredictable behavior:</p>
+
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;runtime&quot;
+    &quot;sync&quot;
+)
+
+var counter = 0
+var wg = sync.WaitGroup{}
+
+func increment() {
+    counter++
+    wg.Done()
+}
+
+func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+
+    for i := 0; i &lt; 1000; i++ {
+        wg.Add(1)
+        go increment()
+    }
+
+    wg.Wait()
+    fmt.Println(counter)
+}
+</code></pre>
+
+<p>Here is the output from multiple runs of the program, and the last run has the race dector flag enabled:</p>
+
+<pre><code>[/tmp]$ go run actor.go
+939
+[/tmp]$ go run actor.go
+945
+[/tmp]$ go run --race actor.go
+==================
+WARNING: DATA RACE
+Read by goroutine 6:
+  main.increment()
+      /tmp/actor.go:13 +0x38
+
+Previous write by goroutine 5:
+  main.increment()
+      /tmp/actor.go:13 +0x54
+
+Goroutine 6 (running) created at:
+  main.main()
+      /tmp/actor.go:22 +0x7f
+
+Goroutine 5 (finished) created at:
+  main.main()
+      /tmp/actor.go:22 +0x7f
+==================
+1000
+Found 1 data race(s)
+exit status 66
+</code></pre>
+
+<h2 id="what-is-an-actor">What is an actor?</h2>
+
+<p><img src="/images/actors/zoolander.jpg" alt="zoolander" /></p>
+
+<p>An actor is a big name for a simple concept: Never allowing multiple threads to access state… Instead delegate a single thread to process requests for state access and modification. Let’s modify our code to use an actor thread to execute our increments:</p>
+
+<pre><code>...
+var actions = make(chan func())
+
+func actor() {
+    for action := range actions {
+        action()
+    }
+}
+
+func main() {
+    runtime.GOMAXPROCS(runtime.NumCPU())
+    defer close(actions)
+    go actor()
+
+    for i := 0; i &lt; 1000; i++ {
+        wg.Add(1)
+        go func() { actions &lt;- increment }()
+    }
+    ...
+</code></pre>
+
+<p>now we get the desired output</p>
+
+<pre><code>[/tmp]$ go run --race actor.go 
+1000
+</code></pre>
+
+<h2 id="matrix-multiplication-using-actors">Matrix multiplication using actors</h2>
+
+<p>Using actors to multiply matrices is nothing new. Here’s how:</p>
+
+<p>Just to review, to get the i, jth entry of the product, take the ith row of the first matrix and multiply entry by entry with the jth column of the second matrix.</p>
+
+<p><img src="/images/actors/matrix_multiply.jpg" alt="matrix_multiply" /></p>
+
+<p>The ith row of the result can be deduced by considering the ith row of the first matrix being multiplied with all of the second matrix.</p>
+
+<p><img src="/images/actors/vector_multiply.jpg" alt="vector_multiply" /></p>
+
+<p>By using an actor for each of the rows, the ith row can be computed and replaced concurrently and in a threadsafe way. Here’s a gist to demonstrate:</p>
+
+<p><a href="http://gist.github.com/slcjordan/e05de3ab485321ff6cbd">gist.github.com/slcjordan/e05de3ab485321ff6cbd</a></p></div>
+
+    
+    
+
+    
+
+    
 
 </main>
 

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>A Short Survey of PProf Visualization Tools</title>
+        <style>
+
+    html body {
+        font-family: Raleway, sans-serif;
+        background-color: white;
+    }
+
+    :root {
+        --accent: #00AACC;
+        --border-width:  5px ;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+
+
+ <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-dark.min.css"> 
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+ 
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js"></script>  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/haskell.min.js"></script>  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/kotlin.min.js"></script>  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/scala.min.js"></script>  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/swift.min.js"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+ <meta name="generator" content="Hugo 0.26" />
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-default navbar-fixed-top">
+
+            <div class="container">
+
+                <div class="navbar-header">
+
+                    <a class="navbar-brand visible-xs" href="#">A Short Survey of PProf Visualization Tools</a>
+
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse">
+
+                    
+                        <ul class="nav navbar-nav">
+                            
+                                <li><a href="/">Home</a></li>
+                            
+                                <li><a href="/posts/">Posts</a></li>
+                            
+                        </ul>
+                    
+
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                            
+                                <li class="navbar-icon"><a href="https://github.com/slcjordan/"><i class="fa fa-github"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://twitter.com/jdevslc/"><i class="fa fa-twitter"></i></a></li>
+                            
+                                <li class="navbar-icon"><a href="https://www.linkedin.com/in/jordan-crabtree-9230621b/"><i class="fa fa-linkedin"></i></a></li>
+                            
+                        </ul>
+                    
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+<main>
+
+    <div class="item">
+
+    
+    
+
+    
+    
+
+    <h4><a href="/posts/pprof/">A Short Survey of PProf Visualization Tools</a></h4>
+    <h5>March 17, 2017</h5>
+    
+
+</div>
+
+
+    <br> <div class="text-justify"><p>Debugging CPU related issues can often lead to nuanced questions about trends. Does the heap usage spike or grow gradually? Where is this routine being called from and how often?
+</p>
+
+<p><img src="/images/pprof/fresco.jpg" alt="fresco" /></p>
+
+<p><em>A picture is worth a thousand words</em></p>
+
+<p>A picture provides useful context in a way that can otherwise be painful to interpret. By backing graph visualizations with pprof data useful CPU statistics can be contextualized over time.</p>
+
+<h2 id="what-is-pprof">What is PProf?</h2>
+
+<p>PProf is a cpu profiler that is part of the gperftools developed by Google for analyzing multi-threaded applications. The pprof package of golang’s standard library provides the data needed by the pprof tool via HTTP.</p>
+
+<p>Since pprof data is served via HTTP, it is essential to run a webserver in your application. As a side-effect of simply importing pprof, the package will register its handlers with the running webserver so no further action is needed.</p>
+
+<p>For a long-running application, this is an example of using pprof:</p>
+
+<pre><code>import (
+	&quot;log&quot;
+	&quot;net/http&quot;
+	_ &quot;net/http/pprof&quot;
+)
+
+func main(){
+	go func() {
+		log.Println(http.ListenAndServe(&quot;localhost:6060&quot;, nil))
+	}()
+...
+</code></pre>
+
+<p>(taken from <a href="http://golang.org/pkg/net/http/pprof/">http://golang.org/pkg/net/http/pprof/</a>)</p>
+
+<h2 id="using-pprof">Using pprof</h2>
+
+<p><img src="/images/pprof/graphviz.png" alt="graphviz" />
+<a href="http://blog.golang.org/profiling-go-programs">http://blog.golang.org/profiling-go-programs</a></p>
+
+<p>PProf comes with the ability to generate graphviz visualiztions of a program’s call graph. PProf bases the graph off of a 30 second sample from a running go application.</p>
+
+<ul>
+<li>Edges represent function calls and are labeled with number of samples with the given function call.</li>
+<li>Size of box corresponds to number of samples with function running.</li>
+<li>Each box has 2 labels: the percentage of time that the function was running and the percentage of time that it showed up as part of a stack trace.</li>
+</ul>
+
+<h3 id="installation-on-mac">Installation on Mac</h3>
+
+<p>$ brew install gperftools
+$ brew install graphviz
+$ pprof &ndash;web localhost:6060/debug</p>
+
+<h2 id="go-torch">Go-Torch</h2>
+
+<p><img src="/images/pprof/torch.svg" alt="torch" />
+<a href="http://github.com/uber/go-torch http://www.brendangregg.com/flamegraphs.html">http://github.com/uber/go-torch http://www.brendangregg.com/flamegraphs.html</a></p>
+
+<p>Go-torch is a tool created by Uber to use Brendan Gregg’s scripts to generate flame graphs for go programs. Like PProf, the visualization is based off a 30 second sample from running the application.</p>
+
+<ul>
+<li>Stack frames are stacked on top of each other vertically, showing the stack depth.</li>
+<li>Frame width represent the percentage of time that a function showed up as part of a stack trace.</li>
+<li>If a function has several ancestors, it will show up several times. (On top of each distinct ancestor’s stack.)</li>
+<li>Colors are arbitrary and x-position is in alphabetical order.</li>
+</ul>
+
+<h3 id="installation">Installation</h3>
+
+<p>requires the installation of go-torch tool, and flame graph scripts by brandangregg.</p>
+
+<pre><code>$ go get github.com/uber/go-torch
+$ git clone git@github.com:brendangregg/FlameGraph.git
+$ export PATH-$PATH:/path/to/FlameGraph
+</code></pre>
+
+<pre><code>go-torch --file &quot;torch.svg&quot; --url http://localhost:6060
+</code></pre>
+
+<h2 id="gom">GOM</h2>
+
+<p><img src="/images/pprof/gom.png" alt="gom" />
+<a href="http://github.com/rakyll/gom">http://github.com/rakyll/gom</a></p>
+
+<p>GOM is a real time curses-style command line tool with visualization of a running go application, written by Google developer Jaana Dogan.</p>
+
+<ul>
+<li>has visualization of running goroutines and machine threads over time.</li>
+<li>Updated in real time.</li>
+<li>In addition to visualization, GOM also provides text-based profiles of CPU and heap.</li>
+</ul>
+
+<pre><code>$ go get github.com/rakyll/gom/cmd/gom
+</code></pre>
+
+<p>as a side-effect of importing gom, gom will register extra handlers as well as the pprof ones.</p>
+
+<pre><code>import (
+	_ &quot;github.com/rakyll/gom/http&quot;
+)
+</code></pre>
+
+<pre><code>$ gom --target http://localhost:6060
+</code></pre>
+
+<h2 id="debug-charts">Debug charts</h2>
+
+<p><img src="/images/pprof/debugcharts.png" alt="debugcharts" />
+<a href="http://github.com/mkevac/debugcharts">http://github.com/mkevac/debugcharts</a></p>
+
+<p>Debug charts is a tool by Marko Kevac that uses the plotly.js library to create a running web view of a running go application.</p>
+
+<ul>
+<li>Runs in browser.</li>
+<li>Has visualization of gc pauses, memory allocated and cpu usage.</li>
+<li>Updated in real time.</li>
+</ul>
+
+<pre><code>$ go get github.com/mkevac/debugcharts
+</code></pre>
+
+<p>as a side-effect of importing debugcharts, debugcharts will register extra handlers as well as the pprof ones.</p>
+
+<p>Then direct your browser to localhost:6060/debug/charts}</p></div>
+
+    
+    
+
+    
+
+    
+
+</main>
+
+        <footer>
+
+            <p class="copyright text-muted">This project is licensed under the terms of the <a href="http://github.com/slcjordan/slcjordan.github.io/blob/master/LICENSE.md">MIT license</a></p>
+
+        </footer>
+
+    </body>
+
+</html>
+
