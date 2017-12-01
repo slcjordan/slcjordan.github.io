@@ -55,7 +55,8 @@ setup() {
   install_dependencies
   setup_git
   git_clone github.com slcjordan/config
-  # sudo chmod +x $source_code/github.com/slcjordan/config
+  sudo chmod +x $source_code/github.com/slcjordan/config/setup.sh
+  $source_code/github.com/slcjordan/config/setup.sh
 
   mkdir -p $(dirname $progress_file)
   touch $progress_file
